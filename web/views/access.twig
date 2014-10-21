@@ -1,0 +1,15 @@
+{% extends "layout.twig" %}
+
+{% block title %}Access Denied{{ parent() }}{% endblock %}
+{% block page_title2 %}{% endblock %}
+{% block page_subtitle %}{% endblock %}
+
+{% block content %}
+<div class="span8 offset2">
+	<section class="widget">
+		<h2>Access Denied</h2>
+		<h3>{{error}}</h3>
+	</section>
+</div>
+{% endblock %}
+

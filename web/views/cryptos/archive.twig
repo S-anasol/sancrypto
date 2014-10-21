@@ -1,0 +1,27 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{subtitle}}{{ parent() }}{% endblock %}
+{% block page_title %}CryptoArchive<small>disabled/closed/dead coins</small>{% endblock %}
+{% block page_subtitle %}{{subtitle}}{% endblock %}
+
+{% block content %}
+<div class="col-md-8 col-md-offset-2">
+	<table class="table table-hover table-striped text-center">
+		{% for crypto in list %}
+		<tr>
+			<td>
+			<a href="{{global.base}}/index/show/{{crypto.short}}/"><img class="img-circle grayscale" src="/img/{{ crypto.logo }}" style="width: 50px;" alt="{{crypto.name}} Mining calculator"></a>
+			</td>
+			<td>
+				<a style="line-height: 47px;" href="{{global.base}}/index/show/{{crypto.short}}/">{{crypto.name}}</a>
+			</td>
+			<td>
+				<a href="{{global.base}}/index/show/{{crypto.short}}/" class="btn btn-info">Open</a>
+			</td>
+		</tr>
+		{% endfor %}
+	</table>
+</div>
+{% endblock %}
+
+

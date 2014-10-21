@@ -1,0 +1,120 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{subtitle}}{{ parent() }}{% endblock %}
+{% block page_subtitle %}{{subtitle}}{% endblock %}
+
+{% block content %}
+<div class="col-md-8">
+	<table class="table table-hover table-striped">
+		{% for crypto in list %}
+		<tr>
+			<td>
+				<a href="{{global.base}}/index/show/{{crypto.short}}/"><img class="img-circle grayscale" src="/img/{{ crypto.logo }}" style="width: 50px;padding-top: 14px;" alt="{{crypto.name}} Mining calculator"></a>
+			</td>
+			<td>
+				<a style="line-height: 47px;" href="{{global.base}}/index/show/{{crypto.short}}/">{{crypto.name}}</a>
+				<p><small><span class="badge badge-info">{{crypto.algo_name}}</span></small></p>
+			</td>
+			<td>
+				{{crypto.chart | raw}}
+			</td>
+			<td>
+				<p class="text-center">{% if crypto.percent >= 150 %}<a href="{{global.base}}/index/show/{{crypto.short}}/" class="btn btn-success">{{crypto.percent}}%</a>{% elseif crypto.percent >= 100 %}<a href="{{global.base}}/index/show/{{crypto.short}}/" class="btn btn-info">{{crypto.percent}}%</a>{% else %}<a href="{{global.base}}/index/show/{{crypto.short}}/" class="btn btn-danger">{{crypto.percent}}%</a>{% endif %}</p>
+				<p class="text-center"><small>{% if crypto.algo == 3 %} vs BTC{% else %}vs LTC{% endif %}</small></p>
+			</td>
+		</tr>
+		{% endfor %}
+	</table>
+</div>
+
+<div class="col-md-4">
+	<a class="twitter-timeline" href="https://twitter.com/rusanasol" data-widget-id="445863167348854784">SanCrypto updates</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</div>
+
+
+
+<!--
+<div class="row" style="margin-top: 15px;">
+	<div class="col-xs-12 text-center">
+		<legend>Anonymous Chat O_O</legend>
+		<iframe class="col-xs-12" height="360" frameborder="0" src="http://bt.nice-media.ru:89/">Chat</iframe>
+	</div>
+</div>-->
+{% endblock %}
+
+{% block javascript %}
+<script src="/js/highcharts.js"></script>
+<script src="/js/data.js"></script>
+
+<script>
+	$(function () {
+		$('.profit24').each(function(){
+			var $this = $(this);
+			$.getJSON('http://sancrypto.info:90/profit_24/'+$this.data('crypto'), function(json_data) {
+				
+				$this.highcharts({
+					navigation: {
+						buttonOptions: {
+							enabled: false
+						}
+					},
+					legend: {
+						enabled: false
+					},
+					chart: {
+						type: "line",
+						backgroundColor: "transparent"
+					},
+					title: {
+						text: ""
+					},
+					xAxis: {
+						type: "datetime",
+						gridLineWidth: 0,
+						lineWidth: 0,
+						minorGridLineWidth: 0,
+						lineColor: "transparent",
+						minorTickLength: 0,
+						tickLength: 0,
+						labels: {
+							enabled: false
+						}
+					},
+					yAxis: {
+						lineWidth: 0,
+						gridLineWidth: 0,
+						minorGridLineWidth: 0,
+						lineColor: "transparent",
+						minorTickLength: 0,
+						tickLength: 0,
+						labels: {
+							enabled: false
+						},
+						title: {
+							text: ""
+						}
+					},
+					plotOptions: {
+						line: {
+							marker: {
+								enabled: false
+							}
+						}
+					},
+					series: [{
+						name: "24hr Profitability Chart",
+						data: json_data
+					}],
+					tooltip: {
+						formatter: function () {
+							return Highcharts.dateFormat("%m/%d/%Y %H:%M", this.x) + ": " + this.y + "%";
+						}
+					}
+				});
+			});
+		});
+	});
+</script>
+{% endblock %}
+

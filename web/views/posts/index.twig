@@ -1,0 +1,59 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{subtitle}}{{ parent() }}{% endblock %}
+{% block page_title %}Blog Posts{% endblock %}
+
+{% block content %}
+<div class="col-md-8 col-md-offset-2">
+	<table class="table table-hover table-striped text-center">
+		{% for post in list %}
+		<tr>
+			<td><a href="{{global.base}}/posts/show/{{post.id}}/">{{post.name}}</a></td>
+			<td><a href="{{global.base}}/posts/show/{{post.id}}/">Published: {{ post.time|date("m/d/Y") }}</a></td>
+			<td><a href="{{global.base}}/posts/show/{{post.id}}/">Views: {{ post.views }}</a></td>
+			<td><a href="{{global.base}}/posts/show/{{post.id}}/#disqus_thread" data-disqus-url="post_{{post.id}}">Comments</a></td>
+		</tr>
+		{% endfor %}
+	</table>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+
+<script type="text/javascript">
+	$(document).ready(function () {
+		
+        var disqusPublicKey = "158DfQunlCymMytIkZ6MG04rnEB4wSXic6uzqjVqDIYHODhDtcoePB5A5vko6xa0";
+        var disqusShortname = "sancrypto";
+        var urlArray = [];
+		
+        $('*[data-disqus-url]').each(function () {
+            var url = $(this).attr('data-disqus-url');
+            urlArray.push('ident:' + url);
+		});
+		$.ajax({
+			type: 'GET',
+			url: "https://disqus.com/api/3.0/threads/set.jsonp",
+			data: { api_key: disqusPublicKey, forum : disqusShortname, thread : urlArray }, // URL method
+			cache: false,
+			dataType: 'jsonp',
+			success: function (result) {
+				
+				for (var i in result.response) {
+					
+					var countText = " comments";
+					var count = result.response[i].posts;
+					
+					if (count == 1)
+					countText = " comment";
+					
+					$('a[data-disqus-url="' + result.response[i].identifiers[0] + '"]').html(count + countText);
+					
+				}
+			}
+		});
+	});
+</script>
+{% endblock %}
+

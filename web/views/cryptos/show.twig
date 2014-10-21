@@ -1,0 +1,276 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{crypto.name}}{{ parent() }}{% endblock %}
+{% block page_title %}<a href="{{crypto.bttalk}}" target="_blank">{{crypto.name}}</a> <small>chart and exchange rates updated live</small>{% endblock %}
+
+{% block content %}
+
+<div class="col-md-12" style="margin-top: 40px;">
+	<div class="row">
+		<div class="col-xs-6 text-center">
+			<table class="table">
+				<tbody>
+					<tr>
+						<td>Algo:</td>
+						<td>{{ algo }}</td>
+					</tr>
+					<tr>
+						<td>Current Difficulty:</td>
+						<td id="_difficulty">???</td>
+					</tr>
+					<tr>
+						<td>Current Block:</td>
+						<td id="getblockcount">???</td>
+					</tr>
+					<tr>
+						<td>Total {{crypto.short}} Mined:</td>
+						<td id="totalbc">???</td>
+					</tr>
+					<tr>
+						<td>Block Explorer</td>
+						<td><a href="{{crypto.explorer}}" target="_blank">{{crypto.explorer}}</a></td>
+					</tr>
+					<tr>
+						<td>Bitcointalk</td>
+						<td><a href="{{crypto.bttalk}}" target="_blank">{{crypto.bttalk}}</a></td>
+					</tr>
+				</tbody>
+			</table>
+			<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto">Chart unavailable</div>
+		</div>
+		<div class="col-xs-6 text-center">
+			<form class="form-horizontal" role="form" method="post">
+				<div class="form-group">
+					<label for="difficulty" class="col-xs-5 control-label">{{crypto.short}} difficulty</label>
+					<div class="col-xs-5">
+						<input type="text" class="form-control" name="difficulty" id="difficulty">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="block_coins" class="col-xs-5 control-label">Coins per Block ({{crypto.short}}/block)</label>
+					<div class="col-xs-5">
+						<input type="text" class="form-control" name="block_coins" id="block_coins" value="{{crypto.cpb}}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="hash_rate" class="col-xs-5 control-label">Your hashrate {% if crypto.algo != 3 %}KH/s{% else %}MH/s{% endif %}({{ algo }})</label>
+					<div class="col-xs-5">
+						<input type="text" class="form-control" name="hash_rate" id="hash_rate" value="1000">
+						<p class="help-block">Hashrate automatically halving for Scrypt-N coins.</p>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="conversion_rate" class="col-xs-5 control-label">{{crypto.short}}/{% if crypto.id != 17 %}BTC{% else %}LTC{% endif %}({{ exchange | raw }})</label>
+					<div class="col-xs-5">
+						<input type="text" class="form-control" name="conversion_rate" id="conversion_rate" value="">
+					</div>
+				</div>
+				{% if crypto.id != 17 %}
+				<div class="form-group">
+					<label for="conversion_rate_lite" class="col-xs-5 control-label">BTC/LTC(<a target="_blank" href="https://btc-e.com/">BTC<sup>e</sup></a>)</label>
+					<div class="col-xs-5">
+						<input type="text" class="form-control" name="conversion_rate_lite" id="conversion_rate_lite" value="">
+					</div>
+				</div>
+				{% endif %}
+				<div class="form-group">
+					<div class="col-xs-12">
+						<button id="calculate" type="submit" name="calculate" value="calculate" class="btn btn-info">Calculate</button>
+					</div>
+				</div>
+			</form>
+			<div class="js-hide">
+				<legend>Results</legend>
+				<div id="results">
+					<table class="table table-striped table-bordered table-hover">
+						<tbody>
+							<tr>
+								<td>Average time to find a block</td>
+								<td id="generation_time">0 day(s), 0 hour(s), 0 min, 0 sec</td>
+							</tr>
+							<tr>
+								<td>Coins per day</td>
+								<td id="coins_per_day">0.0000 <span>{{crypto.short}}</span></td>
+							</tr>
+							<tr>
+								<td>{{crypto.name}} mining revenue per day</td>
+								<td id="revenue_per_day">???</td>
+							</tr>
+							<tr>
+								<td>{% if crypto.algo != 3 %}Litecoin{% else %}Bitcoin{% endif %} mining revenue per day</td>
+								<td id="revenue_per_day_lite">???</td>
+							</tr>
+							<tr>
+								<td colspan="2" id="profit">???</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script src="/js/highcharts.js"></script>
+			<script src="/js/data.js"></script>
+			<script>function update() {
+				$.get("http://sancrypto.info:90/profit_full/{{crypto.id}}/",function(a){$("#profit{{crypto.id}}").highcharts({navigation:{buttonOptions:{enabled:false}},legend:{enabled:false},chart:{type:"line",backgroundColor:"transparent"},title:{text:"Profitability Chart vs LTC"},xAxis:{type:"datetime",gridLineWidth:0,lineWidth:0,minorGridLineWidth:0,lineColor:"transparent",minorTickLength:0,tickLength:0,labels:{enabled:true}},yAxis:{lineWidth:0,gridLineWidth:0,minorGridLineWidth:0,lineColor:"transparent",minorTickLength:0,tickLength:0,labels:{enabled:false},title:{text:""},opposite:true},plotOptions:{line:{marker:{enabled:false}},series:{compare:"percent"}},series:[{name:"profit",data:$.parseJSON(a)}],tooltip:{shared:false,formatter:function(){return Highcharts.dateFormat("%m/%d/%Y %H:%M",this.x)+": "+this.y+"%";}}});});$.get("http://sancrypto.info:90/price_full/{{crypto.id}}/",function(a){$("#price{{crypto.id}}").highcharts({navigation:{buttonOptions:{enabled:false}},legend:{enabled:false},chart:{type:"line",backgroundColor:"transparent"},title:{text:"Price Chart"},xAxis:{type:"datetime",gridLineWidth:0,lineWidth:0,minorGridLineWidth:0,lineColor:"transparent",minorTickLength:0,tickLength:0,labels:{enabled:true}},yAxis:{allowDecimals:true,lineWidth:0,gridLineWidth:0,minorGridLineWidth:0,lineColor:"transparent",minorTickLength:0,tickLength:0,labels:{enabled:false},title:{text:""}},plotOptions:{line:{marker:{enabled:false}},series:{compare:"percent"}},series:[{name:"price",data:$.parseJSON(a)}],tooltip:{shared:false,formatter:function(){return Highcharts.dateFormat("%m/%d/%Y %H:%M",this.x)+": "+Highcharts.numberFormat(this.y,8,".","")+" BTC("+this.point.exchange+")";}}});});
+				
+				$.get("{{global.base}}/cryptos/getblockcount/{{crypto.id}}", function (a) {
+					$("#getblockcount").text(a);
+					calculate()
+				});
+				$.get("{{global.base}}/cryptos/totalbc/{{crypto.id}}", function (a) {
+					$("#totalbc").text(a);
+					calculate()
+				});
+				$.get("{{global.base}}/cryptos/diff/{{crypto.id}}", function (a) {
+					$("#difficulty").val(a);
+					$("#_difficulty").text(a);
+					calculate()
+				});
+				$.get("{{global.base}}/cryptos/btc/{{crypto.id}}", function (a) {
+					$("#conversion_rate").val((a * 1).toFixed(8));
+					calculate()
+				});
+				$.get("{{global.base}}/cryptos/btcltc/{{crypto.id}}", function (a) {
+					$("#conversion_rate_lite").val((a * 1).toFixed(8));
+					calculate()
+				});
+				calculate();
+				setTimeout(update, 60000)
+			}
+			
+			function update_chart() {
+				$.get("{{global.base}}/cryptos/chart/{{crypto.id}}", function (a) {}, "script");
+				setTimeout(update_chart, 180000)
+			}
+			
+			function calculate() {
+				var algo = {{ crypto.algo }};
+				if(algo == 2)
+				{
+					var hrate = $("#hash_rate").val()/2;
+				}
+				else
+				{
+					{% if crypto.algo != 3 %}
+					var hrate = $("#hash_rate").val();
+					{% else %}
+					var hrate = $("#hash_rate").val()*1000;
+					{% endif %}
+					
+				}
+				//console.log(hrate);
+				var j = ($("#difficulty").val() * Math.pow(2, 32)) / (hrate * 1000);
+				{% if crypto.algo != 3 %}
+				var f = ({{ ltcdiff }} * Math.pow(2, 32)) / ($("#hash_rate").val() * 1000);
+				{% else %}
+				var f = ({{ btcdiff }} * Math.pow(2, 32)) / ($("#hash_rate").val() * 1000 * 1000);
+				{% endif %}
+				var h = Math.floor(j);
+				var e = Math.floor(h / 60);
+				var g = Math.floor(e / 60);
+				var i = Math.floor(g / 24);
+				g = g - (i * 24);
+				e = e - (i * 24 * 60) - (g * 60);
+				h = h - (i * 24 * 60 * 60) - (g * 60 * 60) - (e * 60);
+				var c = $("#block_coins").val();
+				var d = (3600 * 24 * c) / j;
+				{% if crypto.algo != 3 %}
+				var l = (3600 * 24 * 50) / f;
+				{% else %}
+				var l = (3600 * 24 * 25) / f;
+				{% endif %}
+				var k = d * $("#conversion_rate").val(); // Bit in crypto
+				{% if crypto.id != 17 %}
+					{% if crypto.algo != 3 %}
+						var b = k / $("#conversion_rate_lite").val(); // Lite in crypto 
+						var a = b * 100 / l.toFixed(2);
+					{% else %}
+						var b = k; // Lite in crypto 
+						var a = b * 100 / l.toFixed(8);
+					{% endif %}
+				{% else %}
+						var b = k; // Lite in crypto 
+						var a = b * 100 / l.toFixed(2);
+				{% endif %}
+				
+
+				{% if crypto.algo != 3 %}
+				var lpl = l * {{ lite_price }}; // Lite USD
+				{% else %}
+				var lpl = l * {{ bit_price }}; // Lite USD
+				{% endif %}
+				{% if crypto.id != 17 %}
+					var bp = k * {{ bit_price }}; // Bit USD
+				{% else %}
+					var bp = k * {{ lite_price }}; // Bit USD
+				{% endif %}
+				$("#generation_time").text(i + " day(s), " + g + " hour(s), " + e + " min, " + h + " sec");
+				$("#coins_per_day").text(d.toFixed(2) + " {{crypto.short}}");
+				{% if crypto.id != 17 %}
+					{% if crypto.algo != 3 %}
+						$("#revenue_per_day").text(k.toFixed(4) + " BTC or " + b.toFixed(2) + " LTC or " + bp.toFixed(2) + " USD");
+					{% else %}
+						$("#revenue_per_day").text(b.toFixed(8) + " BTC or " + bp.toFixed(2) + " USD");
+					{% endif %}
+				{% else %}
+				$("#revenue_per_day").text(b.toFixed(2) + " LTC or " + bp.toFixed(2) + " USD");
+				{% endif %}
+				
+					{% if crypto.algo != 3 %}
+						$("#revenue_per_day_lite").text(l.toFixed(2) + " LTC or " + lpl.toFixed(2) + " USD");
+					{% else %}
+						$("#revenue_per_day_lite").text(l.toFixed(8) + " BTC or " + lpl.toFixed(2) + " USD");
+					{% endif %}
+				
+				if (a.toFixed(0) > 150) {
+					var m = "success"
+					} else {
+					if (a.toFixed(0) > 100) {
+						var m = "info"
+						} else {
+						var m = "danger"
+					}
+				}
+				{% if crypto.algo != 3 %}
+				$("#profit").html('<p>Profit {{crypto.name}} vs. LTC</p><button type="button" class="btn btn-' + m + '">' + a.toFixed(0) + "%</button>"); 
+				{% else %}
+				$("#profit").html('<p>Profit {{crypto.name}} vs. BTC</p><button type="button" class="btn btn-' + m + '">' + a.toFixed(0) + "%</button>"); 
+				{% endif %}
+				//$("#results").fadeTo("fast",0.5).fadeTo("fast",1);
+			}
+			$(document).ready(function () {
+				update_chart();
+				update();
+				if ($.cookie("hashrate")) {
+					$("#hash_rate").val($.cookie("hashrate"));
+					calculate()
+				}
+				$("form").submit(function (a) {
+					a.preventDefault();
+					$.cookie("hashrate", $("#hash_rate").val());
+					calculate();
+					$(".js-hide").show()
+				});
+				setTimeout(calculate, 3000)
+			});</script>
+		</div>
+	</div>
+</div>
+<div class="col-xs-12 text-center" id="profit_chart">
+	<div class="row">
+		<div class="col-xs-6 text-center">
+			<div id="profit{{crypto.id}}" style="min-width: 200px;height: 200px; margin: 0 auto"></div>
+		</div>
+		<div class="col-xs-6 text-center">
+			<div id="price{{crypto.id}}" style="min-width: 200px;height: 200px; margin: 0 auto"></div>
+		</div>
+	</div>
+</div>
+<!--
+<div class="row" style="margin-top: 15px;">
+	<div class="col-xs-12 text-center">
+		<legend>Anonymous Chat O_O</legend>
+		<iframe class="col-xs-12" height="360" frameborder="0" src="http://bt.nice-media.ru:89/">Chat</iframe>
+	</div>
+</div>-->
+{% endblock %}
+

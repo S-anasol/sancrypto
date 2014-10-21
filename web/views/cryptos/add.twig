@@ -1,0 +1,136 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{subtitle}}{{ parent() }}{% endblock %}
+{% block page_title %}{% endblock %}
+
+{% block content %}
+<div class="col-md-6 col-md-offset-3">
+			<form class="form-horizontal label-right" method="post"/>
+			<fieldset>
+				<div class="control-group">
+					<label class="control-label" for="name">
+						Название
+					</label>
+					<div class="controls form-group">
+						<div class="">
+							<input type="text" id="name" name="name" class="form-control" value="{{ data.name }}" required="required" />
+						</div>
+					</div>
+					<label class="control-label" for="short">
+						Короткое название
+					</label>
+					<div class="controls form-group">
+						<div class="">
+							<input type="text" id="short" name="short" class="form-control" value="{{ data.short }}" required="required" />
+						</div>
+					</div>
+					<label class="control-label" for="cpb">
+						CPB
+					</label>
+					<div class="controls form-group">
+						<div class="">
+							<input type="number" id="cpb" name="cpb" class="form-control" value="{{ data.cpb }}" required="required" />
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="exchange">
+							Биржа
+						</label>
+						<div class="controls form-group">
+							<div class="">
+								<select name="exchange" class="form-control" data-trigger="change" required="required">
+									<option value="poloniex" {% if data.exchange == 'poloniex' %}selected{% endif %}>PoloniEX (exchange id = SHORT_NAME)</option>
+									<option value="cryptsy" {% if data.exchange == 'cryptsy' %}selected{% endif %}>Cryptsy (exchange id = market_id)</option>
+									<option value="cryptorush" {% if data.exchange == 'cryptorush' %}selected{% endif %}>CryptoRush</option>
+									<option value="allcoin" {% if data.exchange == 'allcoin' %}selected{% endif %}>AllCoin</option>
+									<option value="coinmarket" {% if data.exchange == 'coinmarket' %}selected{% endif %}>CoinMarket</option>
+									<option value="mintpal" {% if data.exchange == 'mintpal' %}selected{% endif %}>MintPal</option>
+									<option value="bter" {% if data.exchange == 'bter' %}selected{% endif %}>BTER</option>
+									<option value="xnigma" {% if data.exchange == 'xnigma' %}selected{% endif %}>XNGINMA</option>
+									<option value="cryptoaltex" {% if data.exchange == 'cryptoaltex' %}selected{% endif %}>cryptoaltex</option>
+									<option value="btce" {% if data.exchange == 'btce' %}selected{% endif %}>btce</option>
+									<option value="bittrex" {% if data.exchange == 'bittrex' %}selected{% endif %}>bittrex</option>
+									<option value="coinex" {% if data.exchange == 'coinex' %}selected{% endif %}>coinex</option>
+									<option value="bleutrade" {% if data.exchange == 'bleutrade' %}selected{% endif %}>bleutrade</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					
+					
+					<div class="control-group">
+						<label class="control-label" for="exid">
+							exchange id
+						</label>
+						<div class="controls form-group">
+							<div class="">
+								<input type="text" id="exid" name="exid" class="form-control" value="{{ data.exid }}" required="required" />
+							</div>
+						</div>
+					</div>
+					
+					<div class="control-group">
+						<label class="control-label" for="explorer">
+							Explorer
+						</label>
+						<div class="controls form-group">
+							<div class="">
+								<input type="text" id="explorer" name="explorer" class="form-control" value="{{ data.explorer }}" required="required" />
+							</div>
+						</div>
+					</div>
+					
+					
+					<div class="control-group">
+						<label class="control-label" for="logo">
+							logo
+						</label>
+						<div class="controls form-group">
+							<div class="">
+								<input type="text" id="logo" name="logo" class="form-control" value="{{ data.logo }}" placeholder="если нету пиши empty.png" required="required" />
+							</div>
+						</div>
+					</div>
+					
+					
+					<div class="control-group">
+						<label class="control-label" for="bttalk">
+							bttalk
+						</label>
+						<div class="controls form-group">
+							<div class="">
+								<input type="text" id="bttalk" name="bttalk" class="form-control" value="{{ data.bttalk }}" required="required" />
+							</div>
+						</div>
+					</div>
+					
+					
+					<div class="control-group">
+						<label class="control-label" for="algo">
+							algo
+						</label>
+						<div class="controls form-group">
+							<div class="">
+								<select name="algo" class="form-control" data-trigger="change" required="required">
+									<option value="1" {% if data.exchange == '1' %}selected{% endif %}>Scrypt</option>
+									<option value="2" {% if data.exchange == '2' %}selected{% endif %}>Scrypt-N</option>
+									<option value="3" {% if data.exchange == '3' %}selected{% endif %}>Sha256</option>
+									<option value="4" {% if data.exchange == '4' %}selected{% endif %}>x11 quark</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</fieldset>
+			<div class="form-actions">
+				<button type="submit" class="btn btn-danger">Добавить</button>
+				<a href="{{ global.base }}/cryptos/" class="btn">Отмена</a>
+			</div>
+		</form>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}

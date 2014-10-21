@@ -1,0 +1,34 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{subtitle}}{{ parent() }}{% endblock %}
+{% block page_title2 %}{% endblock %}
+{% block page_subtitle %}{{subtitle}}{% endblock %}
+
+{% block content %}
+<div class="col-md-8 col-md-offset-2">
+	<table class="table table-hover table-striped">
+		{% for crypto in data %}
+		<tr>
+			<td>
+				{{crypto.name}}
+			</td>
+			<td>
+				{{crypto.cpb}}
+			</td>
+			<td>
+				{{crypto.status}}
+			</td>
+			<td>
+				<a href="{{global.base}}/cryptos/edit/{{crypto.id}}/">Edit</a>
+			</td>
+		</tr>
+		{% endfor %}
+	</table>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+
+{% endblock %}
+

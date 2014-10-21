@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /cryptos/
+Disallow: /cryptos/add_crypto/
+Disallow: /index/auth/
